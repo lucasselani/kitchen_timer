@@ -1,20 +1,20 @@
-# kitchentimer
+# Kitchen Timer
 
 Countdown multiple timers while in the kitchen.
 
 ## Git Hooks
 Run the following commands:
-```bash
+```shell
 git config core.hooksPath .githooks/
 sudo chmod 755 .githooks/
 ```
 
-## Getting Started
+## Git Flow
+We are using the [GitHub Flow](https://guides.github.com/introduction/flow/)
 
+## Flutter Getting Started
 This project is a starting point for a Flutter application.
-
 A few resources to get you started if this is your first Flutter project:
-
 - [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
 - [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
 
