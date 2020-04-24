@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kitchentimer/providers/timer_provider.dart';
+import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
-import 'package:kitchentimer/widgets/add_timer_dialog.dart';
 import 'package:kitchentimer/widgets/timer_list_item.dart';
 import 'package:provider/provider.dart';
 
@@ -27,12 +27,7 @@ class TimerScreen extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AddTimerDialog(provider: provider);
-                },
-              );
+              Navigator.pushNamed(context, Routes.addTimerScreen);
             },
             child: Icon(Icons.add, color: Colors.white),
             backgroundColor: Colors.green,
