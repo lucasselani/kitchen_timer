@@ -1,21 +1,27 @@
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
-import 'package:kitchentimer/models/timer.dart';
+import 'package:kitchentimer/models/countdown_timer.dart';
 
 class TimerProvider with ChangeNotifier {
-  final List<Timer> _timers = [];
-  UnmodifiableListView<Timer> get timers => UnmodifiableListView(_timers);
+  final List<CountdownTimer> _timers = [];
+  UnmodifiableListView<CountdownTimer> get timers =>
+      UnmodifiableListView(_timers);
+  int get nextCreationOrder => _timers.length;
 
-  void reorderList(int oldIndex, int newIndex) {
-    var timer = _timers.removeAt(oldIndex);
-    _timers.insert(newIndex - 1, timer);
+  int sortTimersByElapsedTime(CountdownTimer a, CountdownTimer b) {
+    return a.remainingSeconds.compareTo(b.remainingSeconds);
+  }
+
+  void addTimer(CountdownTimer timer) {
+    _timers.add(timer);
+    if (_timers.length >= 2) _timers.sort(sortTimersByElapsedTime);
     notifyListeners();
   }
 
-  void addTimer(Timer timer) {
-    timer.id = _timers.length + 1;
-    _timers.add(timer);
+  void removeTimer(CountdownTimer timer) {
+    _timers.remove(timer);
+    if (_timers.length >= 2) _timers.sort(sortTimersByElapsedTime);
     notifyListeners();
   }
 }
