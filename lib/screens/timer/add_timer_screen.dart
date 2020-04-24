@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:kitchentimer/models/timer.dart';
+import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/timer_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -69,14 +69,16 @@ class _TimerForm extends State<_FormState> {
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       _formKey.currentState.save();
-                      final timer = Timer(provider.nextCreationOrder,
+                      final timer = CountdownTimer(
+                          creationOrder: provider.nextCreationOrder,
                           title: _titleController.text,
                           description: _descriptionController.text,
                           duration: Duration(
                               seconds: int.parse(_timeController.text)));
                       provider.addTimer(timer);
-                      Fluttertoast.showToast(msg: 'Temporizador adicionado '
-                          'com suceso!');
+                      Fluttertoast.showToast(
+                          msg: 'Temporizador adicionado '
+                              'com suceso!');
                       Navigator.pop(context);
                     }
                   },

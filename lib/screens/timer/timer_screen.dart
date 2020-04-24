@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/timer_provider.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
@@ -8,7 +9,9 @@ import 'package:provider/provider.dart';
 
 class TimerScreen extends StatelessWidget {
   List<Widget> _createListItems(TimerProvider provider) {
-    return provider.timers.map((timer) => TimerListItem(timer: timer)).toList();
+    return provider.timers
+        .map((CountdownTimer timer) => TimerListItem(timer: timer))
+        .toList();
   }
 
   @override

@@ -6,6 +6,7 @@ echo "Running static analysis..."
 flutter format . && flutter analyze
 status=$?
 if [ "$status" = 0 ] ; then
+    git add .
     echo "Static analysis found no problems. You can push your modifications safely"
     exit 0
 else
