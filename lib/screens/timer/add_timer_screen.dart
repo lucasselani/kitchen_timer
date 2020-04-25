@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
-import 'package:kitchentimer/providers/timer_provider.dart';
+import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:provider/provider.dart';
 
 class AddTimerScreen extends StatelessWidget {
@@ -24,9 +24,68 @@ class _TimerForm extends State<_FormState> {
   final _descriptionController = TextEditingController();
   final _timeController = TextEditingController();
 
-  Widget _createFormField(IconData icon, String label, String hint,
-      TextEditingController controller,
-      {bool validate = true, TextInputType inputType = TextInputType.text}) {
+  CountdownTimer _createTimer(AppProvider provider) {
+    return CountdownTimer(
+        creationOrder: provider.nextCreationOrder,
+        title: _titleController.text,
+        description: _descriptionController.text,
+        duration: Duration(seconds: int.parse(_timeController.text)));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var provider = Provider.of<AppProvider>(context);
+    return Form(
+        key: _formKey,
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _FormField(
+                  icon: Icons.title,
+                  label: 'Título',
+                  hint: 'Arroz, Bolo, etc',
+                  controller: _titleController),
+              _FormField(
+                  icon: Icons.description,
+                  label: 'Descrição',
+                  hint: 'Olhar o forno 5min antes, etc',
+                  controller: _descriptionController,
+                  validate: false),
+              _FormField(
+                  icon: Icons.timer,
+                  label: 'Tempo em segundos',
+                  hint: '60s = 1min',
+                  controller: _timeController,
+                  inputType: TextInputType.number),
+              _FormButton(
+                  provider: provider,
+                  formKey: _formKey,
+                  createTimer: _createTimer),
+            ]));
+  }
+}
+
+class _FormField extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+  final bool validate;
+  final TextInputType inputType;
+
+  _FormField(
+      {@required this.icon,
+      @required this.label,
+      @required this.hint,
+      @required this.controller,
+      this.validate = true,
+      this.inputType = TextInputType.text,
+      Key key})
+      : super(key: ValueKey(label));
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: TextFormField(
@@ -46,45 +105,37 @@ class _TimerForm extends State<_FormState> {
       ),
     );
   }
+}
+
+typedef CreateTimer = CountdownTimer Function(AppProvider provider);
+
+class _FormButton extends StatelessWidget {
+  final AppProvider provider;
+  final CreateTimer createTimer;
+  final GlobalKey<FormState> formKey;
+
+  _FormButton(
+      {@required this.provider,
+      @required this.createTimer,
+      @required this.formKey});
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<TimerProvider>(context);
-    return Form(
-        key: _formKey,
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              _createFormField(
-                  Icons.title, 'Título', 'Arroz, Bolo, etc', _titleController),
-              _createFormField(Icons.description, 'Descrição',
-                  'Olhar o forno 5min antes, etc', _descriptionController,
-                  validate: false),
-              _createFormField(Icons.timer, 'Tempo em segundos', '60s = 1min',
-                  _timeController,
-                  inputType: TextInputType.number),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: RaisedButton(
-                  onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      _formKey.currentState.save();
-                      final timer = CountdownTimer(
-                          creationOrder: provider.nextCreationOrder,
-                          title: _titleController.text,
-                          description: _descriptionController.text,
-                          duration: Duration(
-                              seconds: int.parse(_timeController.text)));
-                      provider.addTimer(timer);
-                      Fluttertoast.showToast(
-                          msg: 'Temporizador adicionado '
-                              'com suceso!');
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Center(child: Text('Criar')),
-                ),
-              ),
-            ]));
+    // TODO: implement build
+    return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+        child: RaisedButton(
+          onPressed: () {
+            if (formKey.currentState.validate()) {
+              formKey.currentState.save();
+              provider.addTimer(createTimer(provider));
+              Fluttertoast.showToast(
+                  msg: 'Temporizador adicionado '
+                      'com suceso!');
+              Navigator.pop(context);
+            }
+          },
+          child: Center(child: Text('Criar')),
+        ));
   }
 }
