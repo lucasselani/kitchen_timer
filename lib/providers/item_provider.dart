@@ -18,7 +18,6 @@ class ItemProvider with ChangeNotifier {
   }
 
   ItemProvider({@required this.countdownTimer}) {
-    countdownTimer.isPlaying = true;
     _startTimer();
   }
 
@@ -32,6 +31,11 @@ class ItemProvider with ChangeNotifier {
     _timer = Timer.periodic(
       Duration(seconds: 1),
       (Timer timer) {
+        if(!countdownTimer.isPlaying) {
+          timer.cancel();
+          notifyListeners();
+          return;
+        }
         if (countdownTimer.remainingSeconds < 1) {
           timer.cancel();
           appProvider.removeTimer(countdownTimer);
