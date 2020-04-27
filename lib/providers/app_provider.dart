@@ -9,8 +9,6 @@ class AppProvider with ChangeNotifier {
   UnmodifiableListView<CountdownTimer> get timers =>
       UnmodifiableListView(_timers);
 
-  final List<CountdownTimer> _favoriteTimers = [];
-
   int get nextCreationOrder => _timers.length;
 
   int _sortTimersByElapsedTime(CountdownTimer a, CountdownTimer b) {
@@ -26,19 +24,6 @@ class AppProvider with ChangeNotifier {
   void removeTimer(CountdownTimer timer) {
     _timers.remove(timer);
     if (_timers.length >= 2) _timers.sort(_sortTimersByElapsedTime);
-    notifyListeners();
-  }
-
-  void favoriteTimer(CountdownTimer timer) {
-    timer.isFavorite = !timer.isFavorite;
-    _favoriteTimers.contains(timer)
-        ? _favoriteTimers.remove(timer)
-        : _favoriteTimers.add(timer);
-    notifyListeners();
-  }
-
-  void playPauseTimer(CountdownTimer timer) {
-    timer.isPlaying = !timer.isPlaying;
     notifyListeners();
   }
 }

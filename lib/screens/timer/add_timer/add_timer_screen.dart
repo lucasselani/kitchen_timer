@@ -6,7 +6,7 @@ import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/strings.dart';
-import 'package:kitchentimer/widgets/material_timer_picker.dart';
+import 'package:kitchentimer/screens/timer/add_timer/material_timer_picker.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 

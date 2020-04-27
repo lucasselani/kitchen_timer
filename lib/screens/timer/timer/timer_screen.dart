@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/styles.dart';
+import 'package:kitchentimer/screens/timer/timer/item/timer_list_item.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
-import 'package:kitchentimer/widgets/timer_list_item.dart';
 import 'package:provider/provider.dart';
 
 class TimerScreen extends StatelessWidget {
@@ -37,19 +36,19 @@ class _TimersList extends StatelessWidget {
 
   _TimersList({@required this.provider});
 
-  List<Widget> _createItemList() => provider.timers
-      .map((CountdownTimer timer) => TimerListItem(countdownTimer: timer))
-      .toList();
-
   @override
   Widget build(BuildContext context) {
     return ListView(
       children: <Widget>[
         SizedBox(height: 24.0),
-        ListView(
-          physics: ScrollPhysics(),
+        ListView.builder(
           shrinkWrap: true,
-          children: _createItemList(),
+          physics: ScrollPhysics(),
+          itemCount: provider.timers.length,
+          itemBuilder: (BuildContext context, int index) {
+            return TimerListItem(
+                countdownTimer: provider.timers[index], key: ValueKey(index));
+          },
         ),
         SizedBox(height: 48.0),
       ],

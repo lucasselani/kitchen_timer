@@ -3,8 +3,8 @@ import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/themes.dart';
-import 'package:kitchentimer/screens/timer/add_timer_screen.dart';
-import 'package:kitchentimer/screens/timer/timer_screen.dart';
+import 'package:kitchentimer/screens/timer/add_timer/add_timer_screen.dart';
+import 'package:kitchentimer/screens/timer/timer/timer_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() => runApp(MyApp());
