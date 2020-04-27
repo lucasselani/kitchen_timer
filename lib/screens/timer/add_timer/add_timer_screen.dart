@@ -1,35 +1,49 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
+import 'package:kitchentimer/resources/colors.dart';
+import 'package:kitchentimer/resources/strings.dart';
+import 'package:kitchentimer/screens/timer/add_timer/material_timer_picker.dart';
+import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
 class AddTimerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: _FormState());
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Container(padding: EdgeInsets.only(top: 16.0), child: _TimerForm()),
+      appBar: AppBar(
+        title: const Text(Strings.addTimerTitle),
+      ),
+      backgroundColor: AppColors.backgroundColor,
+    );
   }
 }
 
-class _FormState extends StatefulWidget {
+class _TimerForm extends StatefulWidget {
   @override
-  _TimerForm createState() {
-    return _TimerForm();
+  _TimerFormState createState() {
+    return _TimerFormState();
   }
 }
 
-class _TimerForm extends State<_FormState> {
+class _TimerFormState extends State<_TimerForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _timeController = TextEditingController();
+  Duration _time;
 
   CountdownTimer _createTimer(AppProvider provider) {
     return CountdownTimer(
-        creationOrder: provider.nextCreationOrder,
-        title: _titleController.text,
-        description: _descriptionController.text,
-        duration: Duration(seconds: int.parse(_timeController.text)));
+      creationOrder: provider.nextCreationOrder,
+      title: _titleController.text,
+      description: _descriptionController.text,
+      duration: _time,
+    );
   }
 
   @override
@@ -51,12 +65,12 @@ class _TimerForm extends State<_FormState> {
                   hint: 'Olhar o forno 5min antes, etc',
                   controller: _descriptionController,
                   validate: false),
-              _FormField(
-                  icon: Icons.timer,
-                  label: 'Tempo em segundos',
-                  hint: '60s = 1min',
-                  controller: _timeController,
-                  inputType: TextInputType.number),
+              MaterialTimerPicker(onTimeSelected: (Duration duration) {
+                setState(() {
+                  _time = duration;
+                });
+              }),
+              Spacer(),
               _FormButton(
                   provider: provider,
                   formKey: _formKey,
@@ -83,25 +97,38 @@ class _FormField extends StatelessWidget {
       Key key})
       : super(key: ValueKey(label));
 
+  InputDecoration _buildInputDecoration(
+      String hint, String label, IconData icon) {
+    return InputDecoration(
+      hintText: hint,
+      labelText: label,
+      //icon: Icon(icon),
+      fillColor: Colors.white,
+      border: OutlineInputBorder(
+        borderSide: BorderSide.none,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          icon: Icon(icon),
+      padding: EdgeInsets.only(bottom: 8.0, left: 16.0, right: 16.0),
+      child: Card(
+        elevation: 4.0,
+        child: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: TextFormField(
+            controller: controller,
+            decoration: _buildInputDecoration(hint, label, icon),
+            keyboardType: inputType,
+            validator: (value) {
+              if (!validate) return null;
+              if (value.isEmpty) return 'Please enter some text';
+              return null;
+            },
+          ),
         ),
-        maxLength: 255,
-        keyboardType: inputType,
-        validator: (value) {
-          if (!validate) return null;
-          if (value.isEmpty) return 'Please enter some text';
-          return null;
-        },
       ),
     );
   }
@@ -119,23 +146,22 @@ class _FormButton extends StatelessWidget {
       @required this.createTimer,
       @required this.formKey});
 
+  void _onClick(BuildContext context) {
+    if (formKey.currentState.validate()) {
+      formKey.currentState.save();
+      provider.addTimer(createTimer(provider));
+      Fluttertoast.showToast(
+          msg: 'Temporizador adicionado '
+              'com suceso!');
+      Navigator.pop(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: RaisedButton(
-          onPressed: () {
-            if (formKey.currentState.validate()) {
-              formKey.currentState.save();
-              provider.addTimer(createTimer(provider));
-              Fluttertoast.showToast(
-                  msg: 'Temporizador adicionado '
-                      'com suceso!');
-              Navigator.pop(context);
-            }
-          },
-          child: Center(child: Text('Criar')),
-        ));
+    return RoundedButton(
+      title: Strings.addButton,
+      onClick: () => _onClick(context),
+    );
   }
 }

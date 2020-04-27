@@ -9,6 +9,8 @@ class CountdownTimer {
   Duration duration;
   int remainingSeconds;
   String title;
+  bool isPlaying = true;
+  bool isFavorite = false;
 
   CountdownTimer(
       {@required int creationOrder,
