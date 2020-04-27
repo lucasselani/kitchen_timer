@@ -6,7 +6,7 @@ import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/strings.dart';
-import 'package:kitchentimer/screens/timer/add_timer/material_timer_picker.dart';
+import 'package:kitchentimer/screens/add_timer/material_timer_picker.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
@@ -38,27 +38,31 @@ class _TimerFormState extends State<_TimerForm> {
   Duration _time;
 
   CountdownTimer _createTimer(AppProvider provider) {
-    return CountdownTimer(
-      creationOrder: provider.nextCreationOrder,
-      title: _titleController.text,
-      description: _descriptionController.text,
-      duration: _time,
-    );
+    return _time != null
+        ? CountdownTimer(
+            creationOrder: provider.nextCreationOrder,
+            title: _titleController.text,
+            description: _descriptionController.text,
+            duration: _time,
+          )
+        : null;
   }
 
   @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<AppProvider>(context);
+    var provider = Provider.of<AppProvider>(context, listen: false);
     return Form(
         key: _formKey,
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               _FormField(
-                  icon: Icons.title,
-                  label: 'Título',
-                  hint: 'Arroz, Bolo, etc',
-                  controller: _titleController),
+                icon: Icons.title,
+                label: 'Título',
+                hint: 'Arroz, Bolo, etc',
+                controller: _titleController,
+                error: 'O título é obrigatório',
+              ),
               _FormField(
                   icon: Icons.description,
                   label: 'Descrição',
@@ -80,6 +84,7 @@ class _TimerFormState extends State<_TimerForm> {
 }
 
 class _FormField extends StatelessWidget {
+  final String error;
   final IconData icon;
   final String label;
   final String hint;
@@ -92,6 +97,7 @@ class _FormField extends StatelessWidget {
       @required this.label,
       @required this.hint,
       @required this.controller,
+      this.error,
       this.validate = true,
       this.inputType = TextInputType.text,
       Key key})
@@ -124,7 +130,7 @@ class _FormField extends StatelessWidget {
             keyboardType: inputType,
             validator: (value) {
               if (!validate) return null;
-              if (value.isEmpty) return 'Please enter some text';
+              if (value.isEmpty) return error;
               return null;
             },
           ),
@@ -149,11 +155,14 @@ class _FormButton extends StatelessWidget {
   void _onClick(BuildContext context) {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      provider.addTimer(createTimer(provider));
-      Fluttertoast.showToast(
-          msg: 'Temporizador adicionado '
-              'com suceso!');
-      Navigator.pop(context);
+      var timer = createTimer(provider);
+      if (timer == null) {
+        Fluttertoast.showToast(msg: Strings.noTimeSelected);
+      } else {
+        provider.addTimer(createTimer(provider));
+        Fluttertoast.showToast(msg: Strings.timerCreated);
+        Navigator.pop(context);
+      }
     }
   }
 

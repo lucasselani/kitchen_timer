@@ -4,7 +4,7 @@ import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/styles.dart';
-import 'package:kitchentimer/screens/timer/timer/item/timer_list_item.dart';
+import 'package:kitchentimer/screens/timer/item/timer_list_item.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
@@ -25,8 +25,24 @@ class TimerScreen extends StatelessWidget {
             ],
           ),
           backgroundColor: AppColors.backgroundColor,
+          floatingActionButton: _FavoriteFab(),
         );
       },
+    );
+  }
+}
+
+class _FavoriteFab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 56.0),
+      child: FloatingActionButton(
+        elevation: 0,
+        backgroundColor: Colors.red,
+        child: Icon(Icons.favorite, color: Colors.white),
+        onPressed: () => print('FAB'),
+      ),
     );
   }
 }
@@ -46,8 +62,7 @@ class _TimersList extends StatelessWidget {
           physics: ScrollPhysics(),
           itemCount: provider.timers.length,
           itemBuilder: (BuildContext context, int index) {
-            return TimerListItem(
-                countdownTimer: provider.timers[index], key: ValueKey(index));
+            return TimerListItem(countdownTimer: provider.timers[index]);
           },
         ),
         SizedBox(height: 48.0),

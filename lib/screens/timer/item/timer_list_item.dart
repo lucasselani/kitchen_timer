@@ -4,15 +4,17 @@ import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/providers/item_provider.dart';
 import 'package:kitchentimer/resources/styles.dart';
-import 'package:kitchentimer/screens/timer/timer/item/action_icons_column.dart';
-import 'package:kitchentimer/screens/timer/timer/item/countdown_watch.dart';
+import 'package:kitchentimer/screens/timer/item/action_icons_column.dart';
+import 'package:kitchentimer/screens/timer/item/countdown_watch.dart';
 import 'package:provider/provider.dart';
 
 class TimerListItem extends StatelessWidget {
   final CountdownTimer countdownTimer;
 
-  TimerListItem({@required Key key, @required this.countdownTimer})
-      : super(key: key);
+  TimerListItem({key, @required this.countdownTimer})
+      : super(
+            key: ValueKey(
+                '${countdownTimer.creationOrder}-${DateTime.now().millisecondsSinceEpoch}'));
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +26,22 @@ class TimerListItem extends StatelessWidget {
         itemProvider.appProvider = appProvider;
         return itemProvider;
       },
-      child: _CardItem(),
+      child: _CardItem(key: key),
     );
   }
 }
 
 class _CardItem extends StatelessWidget {
+  final Key key;
+
+  _CardItem({this.key});
+
   @override
   Widget build(BuildContext context) {
     CountdownTimer countdownTimer =
         Provider.of<ItemProvider>(context, listen: false).countdownTimer;
     return Dismissible(
-      key: Key(countdownTimer.creationOrder.toString()),
+      key: key,
       direction: DismissDirection.endToStart,
       onDismissed: (_) {
         Provider.of<AppProvider>(context, listen: false)

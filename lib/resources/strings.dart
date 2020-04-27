@@ -2,6 +2,11 @@ class Strings {
   // general
   static const addButton = 'ADICIONAR';
 
+  // notification
+  static const timerExpiredTitle = 'Temporizador encerrado';
+
+  static String timerExpiredDescription(String title) => '$title está pronto!';
+
   // main.dart
   static const appTitle = 'Kitchen Timer';
 
@@ -11,5 +16,10 @@ class Strings {
       'temporizador.';
 
   // add_timer_screen.dart
-  static const addTimerTitle = 'Adicionar temporizador';
+  static const addTimerTitle = 'Novo temporizador';
+  static const timerCreated = 'Temporizador criado com suceso!';
+  static const noTimeSelected = 'Selecione um tempo!';
+
+  // favorites_screen.dart
+  static const favoritesTitle = 'Favoritos';
 }
