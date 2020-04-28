@@ -14,25 +14,43 @@ class AppProvider with ChangeNotifier {
 
   int get nextCreationOrder => _timers.length;
 
-  UnmodifiableListView<CountdownTimer> get favorites =>
-      timers.where((timer) => timer.isFavorite);
+  List<CountdownTimer> get favorites =>
+      _timers.where((timer) => timer.isFavorite).toList();
   bool get hasFavorites => favorites.isNotEmpty;
 
   int _sortTimersByElapsedTime(CountdownTimer a, CountdownTimer b) {
     return a.remainingSeconds.compareTo(b.remainingSeconds);
   }
 
-  void addTimer(CountdownTimer timer) {
-    _timers.add(timer);
+  void _notifyListChanged() {
     if (_timers.length >= 2) _timers.sort(_sortTimersByElapsedTime);
     notifyListeners();
   }
 
-  void removeTimer(CountdownTimer timer) {
+  void addTimer(CountdownTimer timer) {
+    _timers.add(timer);
+    _notifyListChanged();
+  }
+
+  void expireTimer(CountdownTimer timer) {
     _timers.remove(timer);
-    if (_timers.length >= 2) _timers.sort(_sortTimersByElapsedTime);
     notificationProvider.showNotification(Strings.timerExpiredTitle,
         Strings.timerExpiredDescription(timer.title));
+    _notifyListChanged();
+  }
+
+  void removeTimer(CountdownTimer timer) {
+    _timers.remove(timer);
+    _notifyListChanged();
+  }
+
+  void favoriteTimer(CountdownTimer timer) {
+    timer.isFavorite = !timer.isFavorite;
+    notifyListeners();
+  }
+
+  void playPauseTimer(CountdownTimer timer) {
+    timer.isPlaying = !timer.isPlaying;
     notifyListeners();
   }
 }

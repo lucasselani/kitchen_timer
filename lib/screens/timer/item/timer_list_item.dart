@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
-import 'package:kitchentimer/providers/item_provider.dart';
 import 'package:kitchentimer/resources/styles.dart';
 import 'package:kitchentimer/screens/timer/item/action_icons_column.dart';
 import 'package:kitchentimer/screens/timer/item/countdown_watch.dart';
@@ -11,37 +10,12 @@ import 'package:provider/provider.dart';
 class TimerListItem extends StatelessWidget {
   final CountdownTimer countdownTimer;
 
-  TimerListItem({key, @required this.countdownTimer})
-      : super(
-            key: ValueKey(
-                '${countdownTimer.creationOrder}-${DateTime.now().millisecondsSinceEpoch}'));
+  TimerListItem({key, @required this.countdownTimer}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProxyProvider<AppProvider, ItemProvider>(
-      create: (BuildContext context) =>
-          ItemProvider(countdownTimer: countdownTimer),
-      update: (BuildContext context, AppProvider appProvider,
-          ItemProvider itemProvider) {
-        itemProvider.appProvider = appProvider;
-        return itemProvider;
-      },
-      child: _CardItem(key: key),
-    );
-  }
-}
-
-class _CardItem extends StatelessWidget {
-  final Key key;
-
-  _CardItem({this.key});
-
-  @override
-  Widget build(BuildContext context) {
-    CountdownTimer countdownTimer =
-        Provider.of<ItemProvider>(context, listen: false).countdownTimer;
     return Dismissible(
-      key: key,
+      key: ValueKey(countdownTimer),
       direction: DismissDirection.endToStart,
       onDismissed: (_) {
         Provider.of<AppProvider>(context, listen: false)
@@ -54,11 +28,11 @@ class _CardItem extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _TextColumn(),
+                _TextColumn(countdownTimer),
                 SizedBox(width: 16),
-                CountdownWatch(),
+                CountdownWatch(countdownTimer),
                 SizedBox(width: 16),
-                ActionIconsColumn(),
+                ActionIconsColumn(countdownTimer),
               ],
             ),
             Padding(
@@ -73,10 +47,12 @@ class _CardItem extends StatelessWidget {
 }
 
 class _TextColumn extends StatelessWidget {
+  final CountdownTimer countdownTimer;
+
+  _TextColumn(this.countdownTimer);
+
   @override
   Widget build(BuildContext context) {
-    CountdownTimer countdownTimer =
-        Provider.of<ItemProvider>(context, listen: false).countdownTimer;
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

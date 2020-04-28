@@ -29,10 +29,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<NotificationProvider, AppProvider>(
           create: (BuildContext context) => AppProvider(),
           update: (BuildContext context, NotificationProvider notification,
-              AppProvider app) {
-            app.notificationProvider = notification;
-            return app;
-          },
+                  AppProvider app) =>
+              app..notificationProvider = notification,
         )
       ],
     );
