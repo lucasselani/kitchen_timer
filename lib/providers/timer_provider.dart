@@ -17,12 +17,12 @@ class TimerProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  TimerProvider({@required this.countdownTimer});
+  TimerProvider({@required this.countdownTimer}) {
+    _initTimer();
+  }
 
   void checkTimer() {
-    if (_timer == null) {
-      _initTimer();
-    } else if (_timer.isActive && !countdownTimer.isPlaying) {
+    if (_timer.isActive && !countdownTimer.isPlaying) {
       _timer.cancel();
     } else if (!_timer.isActive && countdownTimer.isPlaying) {
       _initTimer();
