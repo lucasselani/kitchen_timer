@@ -2,11 +2,14 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
+import 'package:kitchentimer/providers/favorite_provider.dart';
 import 'package:kitchentimer/providers/notification_provider.dart';
 import 'package:kitchentimer/resources/strings.dart';
 
 class AppProvider with ChangeNotifier {
   NotificationProvider notificationProvider;
+  FavoriteProvider favoriteProvider;
+
   final List<CountdownTimer> _timers = [];
 
   UnmodifiableListView<CountdownTimer> get timers =>
@@ -44,8 +47,13 @@ class AppProvider with ChangeNotifier {
     _notifyListChanged();
   }
 
-  void favoriteTimer(CountdownTimer timer) {
+  void favoriteTimer(CountdownTimer timer) async {
     timer.isFavorite = !timer.isFavorite;
+    if (timer.isFavorite) {
+      await favoriteProvider.insert(timer);
+    } else {
+      await favoriteProvider.delete(timer.id);
+    }
     notifyListeners();
   }
 

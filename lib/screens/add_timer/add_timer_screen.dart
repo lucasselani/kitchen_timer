@@ -37,10 +37,9 @@ class _TimerFormState extends State<_TimerForm> {
   final _descriptionController = TextEditingController();
   Duration _time;
 
-  CountdownTimer _createTimer(AppProvider provider) {
+  CountdownTimer _createTimer() {
     return _time != null
         ? CountdownTimer(
-            creationOrder: provider.nextCreationOrder,
             title: _titleController.text,
             description: _descriptionController.text,
             duration: _time,
@@ -140,7 +139,7 @@ class _FormField extends StatelessWidget {
   }
 }
 
-typedef CreateTimer = CountdownTimer Function(AppProvider provider);
+typedef CreateTimer = CountdownTimer Function();
 
 class _FormButton extends StatelessWidget {
   final AppProvider provider;
@@ -155,11 +154,11 @@ class _FormButton extends StatelessWidget {
   void _onClick(BuildContext context) {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      var timer = createTimer(provider);
+      var timer = createTimer();
       if (timer == null) {
         Fluttertoast.showToast(msg: Strings.noTimeSelected);
       } else {
-        provider.addTimer(createTimer(provider));
+        provider.addTimer(timer);
         Fluttertoast.showToast(msg: Strings.timerCreated);
         Navigator.pop(context);
       }

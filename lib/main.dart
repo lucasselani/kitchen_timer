@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
+import 'package:kitchentimer/providers/favorite_provider.dart';
 import 'package:kitchentimer/providers/notification_provider.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
@@ -11,7 +12,6 @@ import 'package:provider/provider.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -26,11 +26,18 @@ class MyApp extends StatelessWidget {
       ),
       providers: [
         Provider(create: (context) => NotificationProvider()),
-        ChangeNotifierProxyProvider<NotificationProvider, AppProvider>(
+        Provider(
+          create: (context) => FavoriteProvider(),
+          dispose: (_, FavoriteProvider favorite) => favorite.close(),
+        ),
+        ChangeNotifierProxyProvider2<NotificationProvider, FavoriteProvider,
+            AppProvider>(
           create: (BuildContext context) => AppProvider(),
           update: (BuildContext context, NotificationProvider notification,
-                  AppProvider app) =>
-              app..notificationProvider = notification,
+                  FavoriteProvider favorite, AppProvider app) =>
+              app
+                ..notificationProvider = notification
+                ..favoriteProvider = favorite,
         )
       ],
     );

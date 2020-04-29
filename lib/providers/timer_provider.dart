@@ -18,6 +18,7 @@ class TimerProvider with ChangeNotifier {
   }
 
   TimerProvider({@required this.countdownTimer}) {
+    countdownTimer.isPlaying = true;
     _initTimer();
   }
 

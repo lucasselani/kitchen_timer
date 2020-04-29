@@ -44,7 +44,12 @@ class _FavoriteFab extends StatelessWidget {
           elevation: 0,
           backgroundColor: Colors.red,
           child: Icon(Icons.favorite, color: Colors.white),
-          onPressed: () => print('FAB'),
+          onPressed: () async {
+            var list = await Provider.of<AppProvider>(context, listen: false)
+                .favoriteProvider
+                .list();
+            print(list);
+          },
         ),
       ),
     );
