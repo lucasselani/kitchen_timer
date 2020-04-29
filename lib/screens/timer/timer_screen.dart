@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/styles.dart';
-import 'package:kitchentimer/screens/timer/timer/item/timer_list_item.dart';
+import 'package:kitchentimer/screens/timer/item/timer_list_item.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
@@ -20,21 +21,40 @@ class TimerScreen extends StatelessWidget {
           body: Stack(
             children: <Widget>[
               _NoTimers(listLength: provider.timers.length),
-              _TimersList(provider: provider),
+              _TimersList(timers: provider.timers),
               _AddButton(),
             ],
           ),
           backgroundColor: AppColors.backgroundColor,
+          floatingActionButton: _FavoriteFab(),
         );
       },
     );
   }
 }
 
-class _TimersList extends StatelessWidget {
-  final AppProvider provider;
+class _FavoriteFab extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Visibility(
+      visible: Provider.of<AppProvider>(context, listen: false).hasFavorites,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: 56.0),
+        child: FloatingActionButton(
+          elevation: 0,
+          backgroundColor: Colors.red,
+          child: Icon(Icons.favorite, color: Colors.white),
+          onPressed: () => print('FAB'),
+        ),
+      ),
+    );
+  }
+}
 
-  _TimersList({@required this.provider});
+class _TimersList extends StatelessWidget {
+  final List<CountdownTimer> timers;
+
+  _TimersList({@required this.timers});
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +63,9 @@ class _TimersList extends StatelessWidget {
         SizedBox(height: 24.0),
         ListView.builder(
           shrinkWrap: true,
-          physics: ScrollPhysics(),
-          itemCount: provider.timers.length,
+          itemCount: timers.length,
           itemBuilder: (BuildContext context, int index) {
-            return TimerListItem(
-                countdownTimer: provider.timers[index], key: ValueKey(index));
+            return TimerListItem(countdownTimer: timers[index]);
           },
         ),
         SizedBox(height: 48.0),

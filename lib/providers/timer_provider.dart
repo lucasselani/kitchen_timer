@@ -5,7 +5,7 @@ import 'package:kitchentimer/models/countdown_timer.dart';
 
 import 'app_provider.dart';
 
-class ItemProvider with ChangeNotifier {
+class TimerProvider with ChangeNotifier {
   Timer _timer;
   CountdownTimer countdownTimer;
   AppProvider _appProvider;
@@ -17,9 +17,16 @@ class ItemProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  ItemProvider({@required this.countdownTimer}) {
-    countdownTimer.isPlaying = true;
-    _startTimer();
+  TimerProvider({@required this.countdownTimer}) {
+    _initTimer();
+  }
+
+  void checkTimer() {
+    if (_timer.isActive && !countdownTimer.isPlaying) {
+      _timer.cancel();
+    } else if (!_timer.isActive && countdownTimer.isPlaying) {
+      _initTimer();
+    }
   }
 
   @override
@@ -28,33 +35,18 @@ class ItemProvider with ChangeNotifier {
     super.dispose();
   }
 
-  void _startTimer() {
+  void _initTimer() {
     _timer = Timer.periodic(
       Duration(seconds: 1),
       (Timer timer) {
         if (countdownTimer.remainingSeconds < 1) {
           timer.cancel();
-          appProvider.removeTimer(countdownTimer);
+          appProvider.expireTimer(countdownTimer);
         } else {
           countdownTimer.remainingSeconds--;
           notifyListeners();
         }
       },
     );
-  }
-
-  void favoriteTimer() {
-    countdownTimer.isFavorite = !countdownTimer.isFavorite;
-    notifyListeners();
-  }
-
-  void playPauseTimer() {
-    countdownTimer.isPlaying = !countdownTimer.isPlaying;
-    if (countdownTimer.isPlaying) {
-      _startTimer();
-    } else {
-      _timer.cancel();
-    }
-    notifyListeners();
   }
 }
