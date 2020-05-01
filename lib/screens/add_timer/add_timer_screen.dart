@@ -5,21 +5,21 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
+import 'package:kitchentimer/resources/heroes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/screens/add_timer/material_timer_picker.dart';
+import 'package:kitchentimer/widgets/app_scaffold.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
 class AddTimerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(padding: EdgeInsets.only(top: 16.0), child: _TimerForm()),
-      appBar: AppBar(
-        title: const Text(Strings.addTimerTitle),
-      ),
-      backgroundColor: AppColors.backgroundColor,
+    return AppScaffold(
+      useGradient: false,
+      title: Strings.addTimerTitle,
+      child:
+          Container(padding: EdgeInsets.only(top: 16.0), child: _TimerForm()),
     );
   }
 }
@@ -108,7 +108,7 @@ class _FormField extends StatelessWidget {
       hintText: hint,
       labelText: label,
       //icon: Icon(icon),
-      fillColor: Colors.white,
+      fillColor: AppColors.white,
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
       ),
@@ -167,9 +167,13 @@ class _FormButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RoundedButton(
-      title: Strings.addButton,
-      onClick: () => _onClick(context),
+    return Hero(
+      tag: Heroes.fabAdd,
+      child: RoundedButton(
+        icon: Icon(Icons.add, color: AppColors.primaryColor),
+        title: Strings.createButton,
+        onClick: () => _onClick(context),
+      ),
     );
   }
 }

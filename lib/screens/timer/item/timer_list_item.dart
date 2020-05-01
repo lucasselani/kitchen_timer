@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
+import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/styles.dart';
 import 'package:kitchentimer/screens/timer/item/action_icons_column.dart';
 import 'package:kitchentimer/screens/timer/item/countdown_watch.dart';
@@ -21,25 +22,28 @@ class TimerListItem extends StatelessWidget {
         Provider.of<AppProvider>(context, listen: false)
             .removeTimer(countdownTimer);
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                _TextColumn(countdownTimer),
-                SizedBox(width: 16),
-                CountdownWatch(countdownTimer),
-                SizedBox(width: 16),
-                ActionIconsColumn(countdownTimer),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Divider(color: Colors.black12),
-            ),
-          ],
+      child: Card(
+        color: AppColors.white,
+        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Column(
+            children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CountdownWatch(countdownTimer),
+                  SizedBox(width: 16),
+                  _TextColumn(countdownTimer),
+                  SizedBox(width: 16),
+                  ActionIconsColumn(countdownTimer),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

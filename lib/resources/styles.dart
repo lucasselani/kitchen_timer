@@ -1,32 +1,37 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:kitchentimer/resources/colors.dart';
 
 class Styles {
-  static const label = TextStyle(
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.normal,
-    fontSize: 14,
-    color: Colors.black54,
+  static TextStyle label = GoogleFonts.lato(
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: Colors.black45,
   );
 
-  static const title = TextStyle(
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.w700,
-    fontSize: 18,
+  static TextStyle title = GoogleFonts.lato(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
     color: Colors.black87,
   );
 
-  static const watch = TextStyle(
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.bold,
-    fontSize: 22,
+  static TextStyle watch = GoogleFonts.lato(
+    fontWeight: FontWeight.w300,
+    fontSize: 14,
     color: Colors.black,
   );
 
-  static const button = TextStyle(
-    fontFamily: 'Roboto',
-    fontWeight: FontWeight.bold,
-    fontSize: 18,
+  static TextStyle button({Color color = AppColors.primaryColor}) =>
+      GoogleFonts.lato(
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+        color: color,
+      );
+
+  static TextStyle appBar = GoogleFonts.lato(
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
     color: Colors.white,
   );
 }

@@ -1,6 +1,8 @@
 class Strings {
   // general
-  static const addButton = 'ADICIONAR';
+  static const createButton = 'CRIAR';
+  static const newButton = 'NOVO';
+  static const favoriteButton = 'FAVORITOS';
 
   // notification
   static const timerExpiredTitle = 'Temporizador encerrado';
@@ -12,8 +14,9 @@ class Strings {
 
   // timer_screen.dart
   static const timerTitle = 'Temporizadores';
-  static const noTimers = 'Clique em "Adicionar" para incluir um novo '
-      'temporizador.';
+
+  static String noTimers(hasFavorite) =>
+      'Clique em "Novo"${hasFavorite ? ' ou em "Favoritos"' : ''} para incluir um temporizador!';
 
   // add_timer_screen.dart
   static const addTimerTitle = 'Novo temporizador';

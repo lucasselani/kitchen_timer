@@ -8,14 +8,10 @@ class FavoriteProvider {
   final String _dbName = 'kitchen_timer.db';
   Database _db;
 
-  FavoriteProvider() {
-    _open();
-  }
-
-  Future _open() async {
+  Future open() async {
     var dbPath = await getDatabasesPath();
     dbPath = join(dbPath, _dbName);
-    _db = await openDatabase(dbPath, version: 1,
+    _db ??= await openDatabase(dbPath, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute('''
         create table ${TimerTable.tableFavorite} ( 

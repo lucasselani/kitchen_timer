@@ -17,9 +17,8 @@ class AppProvider with ChangeNotifier {
 
   int get nextCreationOrder => _timers.length;
 
-  List<CountdownTimer> get favorites =>
-      _timers.where((timer) => timer.isFavorite).toList();
-  bool get hasFavorites => favorites.isNotEmpty;
+  Future<List<CountdownTimer>> get favorites async =>
+      await favoriteProvider.list();
 
   int _sortTimersByElapsedTime(CountdownTimer a, CountdownTimer b) {
     return a.remainingSeconds.compareTo(b.remainingSeconds);
@@ -28,6 +27,10 @@ class AppProvider with ChangeNotifier {
   void _notifyListChanged() {
     if (_timers.length >= 2) _timers.sort(_sortTimersByElapsedTime);
     notifyListeners();
+  }
+
+  Future<void> initDb() async {
+    await favoriteProvider.open();
   }
 
   void addTimer(CountdownTimer timer) {

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
+import 'package:kitchentimer/resources/heroes.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/styles.dart';
 import 'package:kitchentimer/screens/timer/item/timer_list_item.dart';
-import 'package:kitchentimer/widgets/rounded_button.dart';
+import 'package:kitchentimer/widgets/app_scaffold.dart';
 import 'package:provider/provider.dart';
 
 class TimerScreen extends StatelessWidget {
@@ -14,44 +15,91 @@ class TimerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (BuildContext context, AppProvider provider, Widget child) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text(Strings.timerTitle),
+        return FutureBuilder(
+            future: Provider.of<AppProvider>(context, listen: false).initDb(),
+            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? AppScaffold()
+                  : AppScaffold(
+                      useAppBar: false,
+                      child: Stack(
+                        children: <Widget>[
+                          _TimersList(timers: provider.timers),
+                          _NoTimers(listLength: provider.timers.length),
+                        ],
+                      ),
+                      action: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[_AddButton(), _FavoriteFab()],
+                      ),
+                    );
+            });
+      },
+    );
+  }
+}
+
+class _AddButton extends StatelessWidget {
+  _AddButton({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FloatingActionButton.extended(
+        backgroundColor: AppColors.white,
+        icon: Icon(Icons.add, color: AppColors.primaryColor),
+        heroTag: Heroes.fabAdd,
+        label: Text(Strings.newButton, style: Styles.button()),
+        onPressed: () => Navigator.pushNamed(context, Routes.addTimerScreen));
+  }
+}
+
+class _FavoriteFab extends StatelessWidget {
+  _FavoriteFab({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: Provider.of<AppProvider>(context, listen: false).favorites,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<CountdownTimer>> snapshot) {
+        return Visibility(
+          visible: snapshot.hasData ? snapshot.data.isNotEmpty : false,
+          child: Padding(
+            padding: EdgeInsets.only(left: 8),
+            child: FloatingActionButton.extended(
+              backgroundColor: AppColors.red400,
+              icon: Icon(Icons.favorite, color: AppColors.white),
+              heroTag: Heroes.fabFavorite,
+              label: Text(Strings.favoriteButton,
+                  style: Styles.button(color: AppColors.white)),
+              onPressed: () => () async {
+                var list =
+                    await Provider.of<AppProvider>(context, listen: false)
+                        .favorites;
+                print(list);
+              },
+            ),
           ),
-          body: Stack(
-            children: <Widget>[
-              _NoTimers(listLength: provider.timers.length),
-              _TimersList(timers: provider.timers),
-              _AddButton(),
-            ],
-          ),
-          backgroundColor: AppColors.backgroundColor,
-          floatingActionButton: _FavoriteFab(),
         );
       },
     );
   }
 }
 
-class _FavoriteFab extends StatelessWidget {
+class _TimerBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Visibility(
-      visible: Provider.of<AppProvider>(context, listen: false).hasFavorites,
-      child: Padding(
-        padding: EdgeInsets.only(bottom: 56.0),
-        child: FloatingActionButton(
-          elevation: 0,
-          backgroundColor: Colors.red,
-          child: Icon(Icons.favorite, color: Colors.white),
-          onPressed: () async {
-            var list = await Provider.of<AppProvider>(context, listen: false)
-                .favoriteProvider
-                .list();
-            print(list);
-          },
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(
+          Icons.access_alarm,
+          size: 32,
+          color: AppColors.white,
         ),
-      ),
+        SizedBox(width: 16.0),
+        Text(Strings.timerTitle, style: Styles.appBar)
+      ],
     );
   }
 }
@@ -63,33 +111,25 @@ class _TimersList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        SizedBox(height: 24.0),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: timers.length,
-          itemBuilder: (BuildContext context, int index) {
-            return TimerListItem(countdownTimer: timers[index]);
-          },
-        ),
-        SizedBox(height: 48.0),
-      ],
+    return Visibility(
+      visible: timers.isNotEmpty,
+      child: ListView(
+        children: <Widget>[
+          SizedBox(height: 24.0),
+          _TimerBar(),
+          SizedBox(height: 24.0),
+          ListView.builder(
+            physics: ScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: timers.length,
+            itemBuilder: (BuildContext context, int index) {
+              return TimerListItem(countdownTimer: timers[index]);
+            },
+          ),
+          SizedBox(height: 48.0),
+        ],
+      ),
     );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-        left: 0,
-        bottom: 0,
-        right: 0,
-        child: RoundedButton(
-            title: Strings.addButton,
-            onClick: () =>
-                Navigator.pushNamed(context, Routes.addTimerScreen)));
   }
 }
 
@@ -102,10 +142,19 @@ class _NoTimers extends StatelessWidget {
   Widget build(BuildContext context) {
     return Visibility(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(64.0),
         child: Center(
-          child: Text(Strings.noTimers,
-              style: Styles.watch, textAlign: TextAlign.center),
+          child: FutureBuilder(
+            future: Provider.of<AppProvider>(context, listen: false).favorites,
+            builder: (BuildContext context,
+                AsyncSnapshot<List<CountdownTimer>> snapshot) {
+              return Text(
+                  Strings.noTimers(
+                      snapshot.hasData ? snapshot.data.isNotEmpty : false),
+                  style: Styles.button(color: AppColors.white),
+                  textAlign: TextAlign.center);
+            },
+          ),
         ),
       ),
       visible: listLength <= 0,
