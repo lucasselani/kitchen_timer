@@ -18,8 +18,8 @@ class TimerListItem extends StatelessWidget {
     return Dismissible(
       key: ValueKey(countdownTimer),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) {
-        Provider.of<AppProvider>(context, listen: false)
+      onDismissed: (_) async {
+        await Provider.of<AppProvider>(context, listen: false)
             .removeTimer(countdownTimer);
       },
       child: Card(
@@ -62,9 +62,9 @@ class _TextColumn extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(countdownTimer.title, style: Styles.title),
+          Text(countdownTimer.title, style: Styles.title()),
           Container(
-            child: Text(countdownTimer.description, style: Styles.label),
+            child: Text(countdownTimer.description, style: Styles.label()),
             margin: EdgeInsets.only(top: 4.0),
           )
         ],

@@ -151,15 +151,15 @@ class _FormButton extends StatelessWidget {
       @required this.createTimer,
       @required this.formKey});
 
-  void _onClick(BuildContext context) {
+  Future<void> _onClick(BuildContext context) async {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
       var timer = createTimer();
       if (timer == null) {
-        Fluttertoast.showToast(msg: Strings.noTimeSelected);
+        await Fluttertoast.showToast(msg: Strings.noTimeSelected);
       } else {
-        provider.addTimer(timer);
-        Fluttertoast.showToast(msg: Strings.timerCreated);
+        await provider.addTimer(timer);
+        await Fluttertoast.showToast(msg: Strings.timerCreated);
         Navigator.pop(context);
       }
     }

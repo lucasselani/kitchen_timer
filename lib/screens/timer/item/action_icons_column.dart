@@ -51,8 +51,9 @@ class _FavoriteButton extends StatelessWidget {
           color:
               countdownTimer.isFavorite ? AppColors.red400 : AppColors.black45,
           size: 24),
-      onPressed: () => Provider.of<AppProvider>(context, listen: false)
-          .favoriteTimer(countdownTimer),
+      onPressed: () async =>
+          await Provider.of<AppProvider>(context, listen: false)
+              .favoriteTimer(countdownTimer),
     );
   }
 }

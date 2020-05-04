@@ -7,33 +7,44 @@ import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/styles.dart';
 import 'package:kitchentimer/screens/timer/item/timer_list_item.dart';
+import 'package:kitchentimer/utils/dialogUtils.dart';
 import 'package:kitchentimer/widgets/app_scaffold.dart';
 import 'package:provider/provider.dart';
 
 class TimerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () => showExitDialog(context),
+      child: FutureBuilder(
+          future: Provider.of<AppProvider>(context, listen: false).initDb(),
+          builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+            return snapshot.connectionState == ConnectionState.waiting
+                ? AppScaffold()
+                : _TimerScaffold();
+          }),
+    );
+  }
+}
+
+class _TimerScaffold extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Consumer<AppProvider>(
       builder: (BuildContext context, AppProvider provider, Widget child) {
-        return FutureBuilder(
-            future: Provider.of<AppProvider>(context, listen: false).initDb(),
-            builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-              return snapshot.connectionState == ConnectionState.waiting
-                  ? AppScaffold()
-                  : AppScaffold(
-                      useAppBar: false,
-                      child: Stack(
-                        children: <Widget>[
-                          _TimersList(timers: provider.timers),
-                          _NoTimers(listLength: provider.timers.length),
-                        ],
-                      ),
-                      action: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: <Widget>[_AddButton(), _FavoriteFab()],
-                      ),
-                    );
-            });
+        return AppScaffold(
+          useAppBar: false,
+          child: Stack(
+            children: <Widget>[
+              _TimersList(timers: provider.timers),
+              _NoTimers(listLength: provider.timers.length),
+            ],
+          ),
+          action: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[_AddButton(), _FavoriteFab()],
+          ),
+        );
       },
     );
   }
@@ -58,30 +69,24 @@ class _FavoriteFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Provider.of<AppProvider>(context, listen: false).favorites,
-      builder:
-          (BuildContext context, AsyncSnapshot<List<CountdownTimer>> snapshot) {
-        return Visibility(
-          visible: snapshot.hasData ? snapshot.data.isNotEmpty : false,
-          child: Padding(
-            padding: EdgeInsets.only(left: 8),
-            child: FloatingActionButton.extended(
-              backgroundColor: AppColors.red400,
-              icon: Icon(Icons.favorite, color: AppColors.white),
-              heroTag: Heroes.fabFavorite,
-              label: Text(Strings.favoriteButton,
-                  style: Styles.button(color: AppColors.white)),
-              onPressed: () => () async {
-                var list =
-                    await Provider.of<AppProvider>(context, listen: false)
-                        .favorites;
-                print(list);
-              },
-            ),
-          ),
-        );
-      },
+    return Visibility(
+      visible:
+          Provider.of<AppProvider>(context, listen: false).favorites.isNotEmpty,
+      child: Padding(
+        padding: EdgeInsets.only(left: 8),
+        child: FloatingActionButton.extended(
+          backgroundColor: AppColors.red400,
+          icon: Icon(Icons.favorite, color: AppColors.white),
+          heroTag: Heroes.fabFavorite,
+          label: Text(Strings.favoriteButton,
+              style: Styles.button(color: AppColors.white)),
+          onPressed: () => () async {
+            var list = await Provider.of<AppProvider>(context, listen: false)
+                .favorites;
+            print(list);
+          },
+        ),
+      ),
     );
   }
 }
@@ -144,17 +149,12 @@ class _NoTimers extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(64.0),
         child: Center(
-          child: FutureBuilder(
-            future: Provider.of<AppProvider>(context, listen: false).favorites,
-            builder: (BuildContext context,
-                AsyncSnapshot<List<CountdownTimer>> snapshot) {
-              return Text(
-                  Strings.noTimers(
-                      snapshot.hasData ? snapshot.data.isNotEmpty : false),
-                  style: Styles.button(color: AppColors.white),
-                  textAlign: TextAlign.center);
-            },
-          ),
+          child: Text(
+              Strings.noTimers(Provider.of<AppProvider>(context, listen: false)
+                  .favorites
+                  .isNotEmpty),
+              style: Styles.button(color: AppColors.white),
+              textAlign: TextAlign.center),
         ),
       ),
       visible: listLength <= 0,

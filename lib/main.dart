@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
-import 'package:kitchentimer/providers/favorite_provider.dart';
+import 'package:kitchentimer/providers/database_provider.dart';
 import 'package:kitchentimer/providers/notification_provider.dart';
 import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
@@ -35,17 +35,17 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider(create: (context) => NotificationProvider()),
         Provider(
-          create: (context) => FavoriteProvider(),
-          dispose: (_, FavoriteProvider favorite) => favorite.close(),
+          create: (context) => DatabaseProvider(),
+          dispose: (_, DatabaseProvider favorite) => favorite.close(),
         ),
-        ChangeNotifierProxyProvider2<NotificationProvider, FavoriteProvider,
+        ChangeNotifierProxyProvider2<NotificationProvider, DatabaseProvider,
             AppProvider>(
           create: (BuildContext context) => AppProvider(),
           update: (BuildContext context, NotificationProvider notification,
-                  FavoriteProvider favorite, AppProvider app) =>
+                  DatabaseProvider favorite, AppProvider app) =>
               app
                 ..notificationProvider = notification
-                ..favoriteProvider = favorite,
+                ..databaseProvider = favorite,
         )
       ],
     );

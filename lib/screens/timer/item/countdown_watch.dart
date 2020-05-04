@@ -16,11 +16,12 @@ class CountdownWatch extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProxyProvider<AppProvider, TimerProvider>(
       create: (_) => TimerProvider(countdownTimer: countdownTimer),
-      update: (_, AppProvider app, TimerProvider timer) =>
-          timer..appProvider = app,
+      update: (_, AppProvider app, TimerProvider timer) {
+        timer.checkTimer();
+        return timer..appProvider = app;
+      },
       child: Consumer<TimerProvider>(
-        builder: (_, TimerProvider provider, ___) {
-          provider.checkTimer();
+        builder: (_, TimerProvider provider, __) {
           return Stack(
             alignment: Alignment.center,
             children: <Widget>[
@@ -31,14 +32,14 @@ class CountdownWatch extends StatelessWidget {
                     backgroundColor: AppColors.black12,
                     strokeWidth: 2.5,
                     value: 1 -
-                        provider.countdownTimer.remainingSeconds /
+                        provider.countdownTimer.stopwatch.remainingSeconds /
                             provider.countdownTimer.duration.inSeconds,
                     valueColor:
                         AlwaysStoppedAnimation<Color>(AppColors.red300)),
               ),
               Container(
                 child: Text(
-                  formatTime(countdownTimer.remainingSeconds),
+                  formatTime(countdownTimer.stopwatch.remainingSeconds),
                   style: Styles.watch,
                 ),
               ),

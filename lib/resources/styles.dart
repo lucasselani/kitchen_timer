@@ -4,17 +4,17 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:kitchentimer/resources/colors.dart';
 
 class Styles {
-  static TextStyle label = GoogleFonts.lato(
-    fontWeight: FontWeight.w400,
-    fontSize: 12,
-    color: Colors.black45,
-  );
+  static TextStyle label({biggerFont = false}) => GoogleFonts.lato(
+        fontWeight: FontWeight.w400,
+        fontSize: biggerFont ? 16 : 12,
+        color: Colors.black45,
+      );
 
-  static TextStyle title = GoogleFonts.lato(
-    fontWeight: FontWeight.w500,
-    fontSize: 16,
-    color: Colors.black87,
-  );
+  static TextStyle title({biggerFont = false}) => GoogleFonts.lato(
+        fontWeight: FontWeight.w500,
+        fontSize: biggerFont ? 20 : 16,
+        color: Colors.black87,
+      );
 
   static TextStyle watch = GoogleFonts.lato(
     fontWeight: FontWeight.w300,

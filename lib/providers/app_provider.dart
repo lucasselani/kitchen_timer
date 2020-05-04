@@ -2,26 +2,24 @@ import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
-import 'package:kitchentimer/providers/favorite_provider.dart';
+import 'package:kitchentimer/providers/database_provider.dart';
 import 'package:kitchentimer/providers/notification_provider.dart';
 import 'package:kitchentimer/resources/strings.dart';
 
 class AppProvider with ChangeNotifier {
   NotificationProvider notificationProvider;
-  FavoriteProvider favoriteProvider;
+  DatabaseProvider databaseProvider;
 
-  final List<CountdownTimer> _timers = [];
+  List<CountdownTimer> _timers = [];
 
   UnmodifiableListView<CountdownTimer> get timers =>
       UnmodifiableListView(_timers);
 
-  int get nextCreationOrder => _timers.length;
-
-  Future<List<CountdownTimer>> get favorites async =>
-      await favoriteProvider.list();
+  UnmodifiableListView<CountdownTimer> get favorites =>
+      UnmodifiableListView(_timers.where((t) => t.isFavorite));
 
   int _sortTimersByElapsedTime(CountdownTimer a, CountdownTimer b) {
-    return a.remainingSeconds.compareTo(b.remainingSeconds);
+    return a.stopwatch.remainingSeconds.compareTo(b.stopwatch.remainingSeconds);
   }
 
   void _notifyListChanged() {
@@ -30,38 +28,43 @@ class AppProvider with ChangeNotifier {
   }
 
   Future<void> initDb() async {
-    await favoriteProvider.open();
+    await databaseProvider.open();
+    _timers = await databaseProvider.list() ?? [];
   }
 
-  void addTimer(CountdownTimer timer) {
+  Future<void> addTimer(CountdownTimer timer) async {
     _timers.add(timer);
+    await databaseProvider.insert(timer);
     _notifyListChanged();
   }
 
-  void expireTimer(CountdownTimer timer) {
+  Future<void> expireTimer(CountdownTimer timer) async {
     _timers.remove(timer);
     notificationProvider.showNotification(Strings.timerExpiredTitle,
         Strings.timerExpiredDescription(timer.title));
+    await databaseProvider.delete(timer.id);
     _notifyListChanged();
   }
 
-  void removeTimer(CountdownTimer timer) {
+  Future<void> removeTimer(CountdownTimer timer) async {
     _timers.remove(timer);
+    await databaseProvider.delete(timer.id);
     _notifyListChanged();
   }
 
-  void favoriteTimer(CountdownTimer timer) async {
+  Future<void> favoriteTimer(CountdownTimer timer) async {
     timer.isFavorite = !timer.isFavorite;
-    if (timer.isFavorite) {
-      await favoriteProvider.insert(timer);
-    } else {
-      await favoriteProvider.delete(timer.id);
-    }
+    await databaseProvider.update(timer);
     notifyListeners();
   }
 
   void playPauseTimer(CountdownTimer timer) {
     timer.isPlaying = !timer.isPlaying;
     notifyListeners();
+  }
+
+  void decrementRemainingTime(CountdownTimer timer) {
+    timer.stopwatch.remainingSeconds--;
+    databaseProvider.decrementTimer(timer);
   }
 }

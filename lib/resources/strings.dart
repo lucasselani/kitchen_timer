@@ -3,10 +3,16 @@ class Strings {
   static const createButton = 'CRIAR';
   static const newButton = 'NOVO';
   static const favoriteButton = 'FAVORITOS';
+  static const yes = 'SIM';
+  static const no = 'NÃO';
+
+  // exit dialog
+  static const exitDialogTitle = 'Tem certeza que deseja sair?';
+  static const exitDialogLabel = 'Os temporizadores ativos serão '
+      'interrompidos.\n\nDica: Você pode minimizar o app =)';
 
   // notification
   static const timerExpiredTitle = 'Temporizador encerrado';
-
   static String timerExpiredDescription(String title) => '$title está pronto!';
 
   // main.dart
@@ -14,8 +20,7 @@ class Strings {
 
   // timer_screen.dart
   static const timerTitle = 'Temporizadores';
-
-  static String noTimers(hasFavorite) =>
+  static String noTimers(bool hasFavorite) =>
       'Clique em "Novo"${hasFavorite ? ' ou em "Favoritos"' : ''} para incluir um temporizador!';
 
   // add_timer_screen.dart
