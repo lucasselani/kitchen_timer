@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
+import 'package:kitchentimer/resources/colors.dart';
 import 'package:provider/provider.dart';
 
 class ActionIconsColumn extends StatelessWidget {
@@ -30,7 +31,7 @@ class _PlayPauseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return _IconButton(
       icon: Icon(countdownTimer.isPlaying ? Icons.pause : Icons.play_arrow,
-          color: Colors.black, size: 24),
+          color: AppColors.black45, size: 24),
       onPressed: () => Provider.of<AppProvider>(context, listen: false)
           .playPauseTimer(countdownTimer),
     );
@@ -46,11 +47,16 @@ class _FavoriteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return _IconButton(
       icon: Icon(
-          countdownTimer.isFavorite ? Icons.favorite : Icons.favorite_border,
-          color: countdownTimer.isFavorite ? Colors.red : Colors.black,
+          countdownTimer.favoriteId != null
+              ? Icons.favorite
+              : Icons.favorite_border,
+          color: countdownTimer.favoriteId != null
+              ? AppColors.red400
+              : AppColors.black45,
           size: 24),
-      onPressed: () => Provider.of<AppProvider>(context, listen: false)
-          .favoriteTimer(countdownTimer),
+      onPressed: () async =>
+          await Provider.of<AppProvider>(context, listen: false)
+              .favoriteTimer(countdownTimer),
     );
   }
 }

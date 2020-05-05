@@ -14,7 +14,7 @@ class MaterialTimerPicker extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Card(
-        elevation: 4.0,
+        elevation: 6.0,
         child: CupertinoTheme(
           data: CupertinoThemeData(
             textTheme:

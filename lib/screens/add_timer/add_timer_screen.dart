@@ -5,21 +5,22 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kitchentimer/models/countdown_timer.dart';
 import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
+import 'package:kitchentimer/resources/heroes.dart';
 import 'package:kitchentimer/resources/strings.dart';
+import 'package:kitchentimer/resources/styles.dart';
 import 'package:kitchentimer/screens/add_timer/material_timer_picker.dart';
+import 'package:kitchentimer/widgets/app_scaffold.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
 import 'package:provider/provider.dart';
 
 class AddTimerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(padding: EdgeInsets.only(top: 16.0), child: _TimerForm()),
-      appBar: AppBar(
-        title: const Text(Strings.addTimerTitle),
-      ),
-      backgroundColor: AppColors.backgroundColor,
+    return AppScaffold(
+      useGradient: false,
+      title: Strings.addTimerTitle,
+      child:
+          Container(padding: EdgeInsets.only(top: 16.0), child: _TimerForm()),
     );
   }
 }
@@ -34,15 +35,12 @@ class _TimerForm extends StatefulWidget {
 class _TimerFormState extends State<_TimerForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
   Duration _time;
 
-  CountdownTimer _createTimer(AppProvider provider) {
+  CountdownTimer _createTimer() {
     return _time != null
         ? CountdownTimer(
-            creationOrder: provider.nextCreationOrder,
             title: _titleController.text,
-            description: _descriptionController.text,
             duration: _time,
           )
         : null;
@@ -56,19 +54,18 @@ class _TimerFormState extends State<_TimerForm> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 16, top: 8, bottom: 8),
+                  child: Text(Strings.title, style: Styles.form)),
               _FormField(
                 icon: Icons.title,
-                label: 'Título',
-                hint: 'Arroz, Bolo, etc',
+                hint: Strings.timerTitleHint,
                 controller: _titleController,
-                error: 'O título é obrigatório',
+                error: Strings.timerTitleError,
               ),
-              _FormField(
-                  icon: Icons.description,
-                  label: 'Descrição',
-                  hint: 'Olhar o forno 5min antes, etc',
-                  controller: _descriptionController,
-                  validate: false),
+              Padding(
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                  child: Text(Strings.time, style: Styles.form)),
               MaterialTimerPicker(onTimeSelected: (Duration duration) {
                 setState(() {
                   _time = duration;
@@ -86,7 +83,6 @@ class _TimerFormState extends State<_TimerForm> {
 class _FormField extends StatelessWidget {
   final String error;
   final IconData icon;
-  final String label;
   final String hint;
   final TextEditingController controller;
   final bool validate;
@@ -94,22 +90,19 @@ class _FormField extends StatelessWidget {
 
   _FormField(
       {@required this.icon,
-      @required this.label,
       @required this.hint,
       @required this.controller,
       this.error,
       this.validate = true,
       this.inputType = TextInputType.text,
       Key key})
-      : super(key: ValueKey(label));
+      : super(key: key);
 
-  InputDecoration _buildInputDecoration(
-      String hint, String label, IconData icon) {
+  InputDecoration _buildInputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      labelText: label,
-      //icon: Icon(icon),
-      fillColor: Colors.white,
+      fillColor: AppColors.white,
+      hintStyle: Styles.label(biggerFont: true),
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
       ),
@@ -121,12 +114,13 @@ class _FormField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.0, left: 16.0, right: 16.0),
       child: Card(
-        elevation: 4.0,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+        elevation: 6.0,
+        child: Container(
+          padding: EdgeInsets.only(bottom: 4.0),
           child: TextFormField(
+            style: Styles.title(biggerFont: true),
             controller: controller,
-            decoration: _buildInputDecoration(hint, label, icon),
+            decoration: _buildInputDecoration(hint, icon),
             keyboardType: inputType,
             validator: (value) {
               if (!validate) return null;
@@ -140,7 +134,7 @@ class _FormField extends StatelessWidget {
   }
 }
 
-typedef CreateTimer = CountdownTimer Function(AppProvider provider);
+typedef CreateTimer = CountdownTimer Function();
 
 class _FormButton extends StatelessWidget {
   final AppProvider provider;
@@ -152,15 +146,15 @@ class _FormButton extends StatelessWidget {
       @required this.createTimer,
       @required this.formKey});
 
-  void _onClick(BuildContext context) {
+  Future<void> _onClick(BuildContext context) async {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
-      var timer = createTimer(provider);
+      var timer = createTimer();
       if (timer == null) {
-        Fluttertoast.showToast(msg: Strings.noTimeSelected);
+        await Fluttertoast.showToast(msg: Strings.noTimeSelected);
       } else {
-        provider.addTimer(createTimer(provider));
-        Fluttertoast.showToast(msg: Strings.timerCreated);
+        await provider.addTimer(timer);
+        await Fluttertoast.showToast(msg: Strings.timerCreated);
         Navigator.pop(context);
       }
     }
@@ -168,9 +162,14 @@ class _FormButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RoundedButton(
-      title: Strings.addButton,
-      onClick: () => _onClick(context),
+    return Hero(
+      tag: Heroes.fabAdd,
+      child: RoundedButton(
+        color: AppColors.red400,
+        icon: Icon(Icons.add, color: AppColors.white),
+        title: Strings.createButton,
+        onClick: () => _onClick(context),
+      ),
     );
   }
 }
