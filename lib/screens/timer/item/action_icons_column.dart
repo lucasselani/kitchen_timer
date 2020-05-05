@@ -47,9 +47,12 @@ class _FavoriteButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return _IconButton(
       icon: Icon(
-          countdownTimer.isFavorite ? Icons.favorite : Icons.favorite_border,
-          color:
-              countdownTimer.isFavorite ? AppColors.red400 : AppColors.black45,
+          countdownTimer.favoriteId != null
+              ? Icons.favorite
+              : Icons.favorite_border,
+          color: countdownTimer.favoriteId != null
+              ? AppColors.red400
+              : AppColors.black45,
           size: 24),
       onPressed: () async =>
           await Provider.of<AppProvider>(context, listen: false)

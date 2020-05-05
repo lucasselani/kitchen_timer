@@ -55,7 +55,7 @@ class AppScaffold extends StatelessWidget {
       body: _buildBody(),
       floatingActionButton: action,
       resizeToAvoidBottomInset: false,
-      backgroundColor: Color(0xFAFAFAFF),
+      backgroundColor: AppColors.white,
     );
   }
 }

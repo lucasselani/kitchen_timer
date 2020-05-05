@@ -7,6 +7,6 @@ String formatTime(int timeInSeconds) {
   var seconds = time % 60;
   var formatted = '';
   if (hours > 0) formatted += '${hours.toString().padLeft(2, '0')}:';
-  if (minutes > 0) formatted += '${minutes.toString().padLeft(2, '0')}:';
+  formatted += '${minutes.toString().padLeft(2, '0')}:';
   return '$formatted${seconds.toString().padLeft(2, '0')}';
 }

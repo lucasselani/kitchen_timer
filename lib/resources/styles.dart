@@ -22,6 +22,12 @@ class Styles {
     color: Colors.black,
   );
 
+  static TextStyle form = GoogleFonts.lato(
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+    color: AppColors.red400,
+  );
+
   static TextStyle button({Color color = AppColors.primaryColor}) =>
       GoogleFonts.lato(
         fontWeight: FontWeight.bold,

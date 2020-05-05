@@ -7,6 +7,7 @@ import 'package:kitchentimer/providers/app_provider.dart';
 import 'package:kitchentimer/resources/colors.dart';
 import 'package:kitchentimer/resources/heroes.dart';
 import 'package:kitchentimer/resources/strings.dart';
+import 'package:kitchentimer/resources/styles.dart';
 import 'package:kitchentimer/screens/add_timer/material_timer_picker.dart';
 import 'package:kitchentimer/widgets/app_scaffold.dart';
 import 'package:kitchentimer/widgets/rounded_button.dart';
@@ -34,14 +35,12 @@ class _TimerForm extends StatefulWidget {
 class _TimerFormState extends State<_TimerForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _descriptionController = TextEditingController();
   Duration _time;
 
   CountdownTimer _createTimer() {
     return _time != null
         ? CountdownTimer(
             title: _titleController.text,
-            description: _descriptionController.text,
             duration: _time,
           )
         : null;
@@ -55,19 +54,18 @@ class _TimerFormState extends State<_TimerForm> {
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Padding(
+                  padding: EdgeInsets.only(left: 16, top: 8, bottom: 8),
+                  child: Text(Strings.title, style: Styles.form)),
               _FormField(
                 icon: Icons.title,
-                label: 'Título',
-                hint: 'Arroz, Bolo, etc',
+                hint: Strings.timerTitleHint,
                 controller: _titleController,
-                error: 'O título é obrigatório',
+                error: Strings.timerTitleError,
               ),
-              _FormField(
-                  icon: Icons.description,
-                  label: 'Descrição',
-                  hint: 'Olhar o forno 5min antes, etc',
-                  controller: _descriptionController,
-                  validate: false),
+              Padding(
+                  padding: EdgeInsets.only(left: 16, top: 16, bottom: 8),
+                  child: Text(Strings.time, style: Styles.form)),
               MaterialTimerPicker(onTimeSelected: (Duration duration) {
                 setState(() {
                   _time = duration;
@@ -85,7 +83,6 @@ class _TimerFormState extends State<_TimerForm> {
 class _FormField extends StatelessWidget {
   final String error;
   final IconData icon;
-  final String label;
   final String hint;
   final TextEditingController controller;
   final bool validate;
@@ -93,22 +90,19 @@ class _FormField extends StatelessWidget {
 
   _FormField(
       {@required this.icon,
-      @required this.label,
       @required this.hint,
       @required this.controller,
       this.error,
       this.validate = true,
       this.inputType = TextInputType.text,
       Key key})
-      : super(key: ValueKey(label));
+      : super(key: key);
 
-  InputDecoration _buildInputDecoration(
-      String hint, String label, IconData icon) {
+  InputDecoration _buildInputDecoration(String hint, IconData icon) {
     return InputDecoration(
       hintText: hint,
-      labelText: label,
-      //icon: Icon(icon),
       fillColor: AppColors.white,
+      hintStyle: Styles.label(biggerFont: true),
       border: OutlineInputBorder(
         borderSide: BorderSide.none,
       ),
@@ -120,12 +114,13 @@ class _FormField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.0, left: 16.0, right: 16.0),
       child: Card(
-        elevation: 4.0,
-        child: Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+        elevation: 6.0,
+        child: Container(
+          padding: EdgeInsets.only(bottom: 4.0),
           child: TextFormField(
+            style: Styles.title(biggerFont: true),
             controller: controller,
-            decoration: _buildInputDecoration(hint, label, icon),
+            decoration: _buildInputDecoration(hint, icon),
             keyboardType: inputType,
             validator: (value) {
               if (!validate) return null;
@@ -170,7 +165,8 @@ class _FormButton extends StatelessWidget {
     return Hero(
       tag: Heroes.fabAdd,
       child: RoundedButton(
-        icon: Icon(Icons.add, color: AppColors.primaryColor),
+        color: AppColors.red400,
+        icon: Icon(Icons.add, color: AppColors.white),
         title: Strings.createButton,
         onClick: () => _onClick(context),
       ),

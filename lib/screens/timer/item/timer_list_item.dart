@@ -30,44 +30,19 @@ class TimerListItem extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Column(
-            children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  CountdownWatch(countdownTimer),
-                  SizedBox(width: 16),
-                  _TextColumn(countdownTimer),
-                  SizedBox(width: 16),
-                  ActionIconsColumn(countdownTimer),
-                ],
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CountdownWatch(countdownTimer),
+              SizedBox(width: 16),
+              Expanded(
+                child: Text(countdownTimer.title, style: Styles.title()),
               ),
+              SizedBox(width: 16),
+              ActionIconsColumn(countdownTimer),
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _TextColumn extends StatelessWidget {
-  final CountdownTimer countdownTimer;
-
-  _TextColumn(this.countdownTimer);
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(countdownTimer.title, style: Styles.title()),
-          Container(
-            child: Text(countdownTimer.description, style: Styles.label()),
-            margin: EdgeInsets.only(top: 4.0),
-          )
-        ],
       ),
     );
   }

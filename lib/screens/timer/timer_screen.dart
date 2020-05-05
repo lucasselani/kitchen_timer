@@ -75,17 +75,13 @@ class _FavoriteFab extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.only(left: 8),
         child: FloatingActionButton.extended(
-          backgroundColor: AppColors.red400,
-          icon: Icon(Icons.favorite, color: AppColors.white),
-          heroTag: Heroes.fabFavorite,
-          label: Text(Strings.favoriteButton,
-              style: Styles.button(color: AppColors.white)),
-          onPressed: () => () async {
-            var list = await Provider.of<AppProvider>(context, listen: false)
-                .favorites;
-            print(list);
-          },
-        ),
+            backgroundColor: AppColors.red400,
+            icon: Icon(Icons.favorite, color: AppColors.white),
+            heroTag: Heroes.fabFavorite,
+            label: Text(Strings.favoriteButton,
+                style: Styles.button(color: AppColors.white)),
+            onPressed: () =>
+                Navigator.pushNamed(context, Routes.favoriteScreen)),
       ),
     );
   }

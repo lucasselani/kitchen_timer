@@ -1,8 +1,11 @@
 class Strings {
   // general
   static const createButton = 'CRIAR';
+  static const addButton = 'ADICIONAR';
   static const newButton = 'NOVO';
   static const favoriteButton = 'FAVORITOS';
+  static const title = 'TÍTULO';
+  static const time = 'TEMPO';
   static const yes = 'SIM';
   static const no = 'NÃO';
 
@@ -26,8 +29,11 @@ class Strings {
   // add_timer_screen.dart
   static const addTimerTitle = 'Novo temporizador';
   static const timerCreated = 'Temporizador criado com suceso!';
+  static const timerTitleHint = 'Comida, exercícios, leitura, etc';
+  static const timerTitleError = 'O título é obrigatório';
   static const noTimeSelected = 'Selecione um tempo!';
 
   // favorites_screen.dart
   static const favoritesTitle = 'Favoritos';
+  static const timerAdded = 'Temporizadores adicionados com suceso!';
 }

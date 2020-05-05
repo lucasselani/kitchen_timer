@@ -8,6 +8,7 @@ class Themes {
         primarySwatch: AppColors.primaryColor,
         accentColor: AppColors.accentColor,
         backgroundColor: AppColors.primaryColor,
+        textSelectionColor: AppColors.primaryColor,
         brightness: Brightness.light,
         textTheme: GoogleFonts.latoTextTheme(
           Theme.of(context).textTheme,

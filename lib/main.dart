@@ -8,6 +8,7 @@ import 'package:kitchentimer/resources/routes.dart';
 import 'package:kitchentimer/resources/strings.dart';
 import 'package:kitchentimer/resources/themes.dart';
 import 'package:kitchentimer/screens/add_timer/add_timer_screen.dart';
+import 'package:kitchentimer/screens/favorite/favorite_screen.dart';
 import 'package:kitchentimer/screens/timer/timer_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         routes: {
           Routes.timerScreen: (context) => TimerScreen(),
           Routes.addTimerScreen: (context) => AddTimerScreen(),
+          Routes.favoriteScreen: (context) => FavoriteScreen(),
         },
       ),
       providers: [
