@@ -52,7 +52,7 @@ class AppProvider with ChangeNotifier {
     await databaseProvider.delete(timer.id);
     _timers.remove(timer);
     notificationProvider.showNotification(Strings.timerExpiredTitle,
-        Strings.timerExpiredDescription(timer.title));
+        Strings.timerExpiredDescription(timer.title), timer.id);
     _notifyListChanged();
   }
 
